@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>HornyBroReviews.com - News, Models & Videos</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+  <!-- Swiper.js (Slider) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
+  <!-- FontAwesome (Icons) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"/>
+  <!-- tParticles for background -->
+  <script src="https://cdn.jsdelivr.net/npm/tsparticles@3.1.0/tsparticles.bundle.min.js"></script>
+  <!-- ScrollReveal for animations -->
+  <script src="https://unpkg.com/scrollreveal"></script>
+  <!-- Custom Tailwind Config -->
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Montserrat', 'sans-serif'],
+          },
+          colors: {
+            primary: {
+              light: '#e4f1ff',
+              DEFAULT: '#1e90ff',
+              dark: '#003366',
+            },
+            accent: {
+              DEFAULT: '#38bdf8',
+              glass: '#e0f2fe80',
+            },
+            card: {
+              light: '#ffffffd9',
+              dark: '#172337d9'
+            }
+          },
+          boxShadow: {
+            glass: '0 4px 30px rgba(30,144,255,0.05)',
+            neumorph: '8px 8px 16px #b6d4f5, -8px -8px 16px #ffffff'
+          },
+          backdropBlur: {
+            glass: 'blur(16px)',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Montserrat', sans-serif;
+    }
+    .glass-card {
+      @apply bg-card-light dark:bg-card-dark backdrop-blur-glass shadow-glass rounded-xl border border-white/20 dark:border-slate-900/30 transition-colors;
+    }
+    .neumorph {
+      box-shadow: 8px 8px 16px #b6d4f5, -8px -8px 16px #ffffff;
+    }
+    .sidebar::-webkit-scrollbar {
+      display: none;
+    }
+    .noise-bg {
+      pointer-events:none;
+      position:fixed;
+      inset:0;
+      background-image:url('https://www.transparenttextures.com/patterns/noise.png');
+      opacity:.06;
+      z-index:0;
+      mix-blend-mode:overlay;
+    }
+    /* Swiper custom arrows */
+    .swiper-button-next,.swiper-button-prev{color:#1e90ff !important}
+    /* Hide age gate block scroll */
+    body.age-gated {overflow: hidden;}
+  </style>
+</head>
+<body class="bg-primary-light dark:bg-primary-dark text-primary-dark dark:text-primary-light transition-colors duration-500 relative">
+  <div id="noise" class="noise-bg"></div>
+  <!-- Age Consent Popup -->
+  <div id="ageConsentModal" class="fixed inset-0 z-[100] bg-primary-dark/90 flex items-center justify-center transition-opacity duration-300">
+    <div class="glass-card max-w-md w-full px-8 py-10 text-center shadow-xl">
+      <h2 class="text-2xl font-bold mb-4 text-primary-dark dark:text-primary-light">Age Verification</h2>
+      <p class="mb-6 text-lg">Are you 18 years old or older?</p>
+      <div class="flex justify-center gap-8 mb-2">
+        <button id="ageYes" class="px-8 py-2 bg-primary rounded-lg font-bold text-white hover:bg-accent transition">Yes</button>
+        <button id="ageNo" class="px-8 py-2 bg-slate-300 text-primary-dark rounded-lg font-bold hover:bg-red-400 hover:text-white transition">No</button>
+      </div>
+      <p class="text-xs text-slate-500 mt-2">You must be 18+ to enter this site.</p>
+    </div>
+  </div>
+  <!-- Header & Navbar -->
+  <header class="sticky top-0 z-50 bg-white/80 dark:bg-primary-dark/80 backdrop-blur-glass shadow-md transition-colors">
+    <div class="container mx-auto flex items-center justify-between px-4 py-3">
+      <a href="index.html" class="flex items-center gap-2 text-2xl font-extrabold tracking-wide text-primary-dark dark:text-primary-light">
+        <span class="fa-solid fa-fire text-accent"></span> HornyBroReviews
+      </a>
+      <nav class="hidden md:flex gap-8 items-center font-semibold">
+        <a href="index.html" class="hover:text-primary">Home</a>
+        <a href="news.html" class="hover:text-primary">News</a>
+        <a href="models.html" class="hover:text-primary">Models</a>
+        <a href="videos.html" class="hover:text-primary">Videos</a>
+        <a href="#contact" class="hover:text-primary">Contact</a>
+      </nav>
+      <div class="flex gap-4 items-center">
+        <!-- Dark/Light Toggle -->
+        <button id="toggleDark" class="w-10 h-10 flex items-center justify-center rounded-full bg-primary/10 hover:bg-primary/20 dark:bg-primary-dark/30 dark:hover:bg-primary-dark/50 transition" aria-label="Toggle dark mode">
+          <span id="darkIcon" class="fa-solid fa-moon text-lg"></span>
+          <span id="lightIcon" class="fa-solid fa-sun text-lg hidden"></span>
+        </button>
+        <!-- Mobile nav -->
+        <button class="md:hidden" id="mobileMenuBtn" aria-label="Open menu">
+          <span class="fa-solid fa-bars text-2xl"></span>
+        </button>
+      </div>
+    </div>
+    <!-- Mobile Menu -->
+    <div id="mobileMenu" class="hidden fixed inset-0 z-40 bg-white/95 dark:bg-primary-dark/95 p-8 flex flex-col gap-8 text-xl">
+      <button class="self-end mb-4" id="closeMobileMenu" aria-label="Close menu"><span class="fa-solid fa-times text-2xl"></span></button>
+      <a href="index.html" class="hover:text-primary">Home</a>
+      <a href="news.html" class="hover:text-primary">News</a>
+      <a href="models.html" class="hover:text-primary">Models</a>
+      <a href="videos.html" class="hover:text-primary">Videos</a>
+      <a href="#contact" class="hover:text-primary">Contact</a>
+    </div>
+  </header>
+  <!-- Hero Section -->
+  <section class="relative overflow-hidden py-20 md:py-32">
+    <div id="particlesBg" class="absolute inset-0 z-0"></div>
+    <div class="relative z-10 container mx-auto flex flex-col md:flex-row items-center gap-12 px-4">
+      <div class="flex-1">
+        <h1 class="text-4xl md:text-6xl font-extrabold leading-tight mb-6 text-primary-dark dark:text-primary-light drop-shadow-lg">HornyBroReviews</h1>
+        <p class="text-lg md:text-2xl mb-8 text-primary-dark/80 dark:text-primary-light/80">Your #1 source for adult industry news, model spotlights, and the hottest male porn stars in both gay and straight porn. Stay in the know!</p>
+        <a href="news.html" class="inline-block px-8 py-3 bg-primary text-white text-lg font-bold rounded-xl shadow-neumorph hover:bg-accent transition mr-4">Read News</a>
+        <a href="models.html" class="inline-block px-8 py-3 glass-card font-bold text-lg shadow-neumorph hover:bg-primary hover:text-white transition">Explore Models</a>
+      </div>
+      <div class="flex-1 flex justify-center md:justify-end">
+        <div class="relative rounded-3xl overflow-hidden shadow-xl glass-card w-80 h-96 md:w-96 md:h-[28rem]">
+          <img src="https://picsum.photos/id/1011/400/500" alt="Featured Model" class="w-full h-full object-cover"/>
+          <div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-primary-dark/90 to-transparent p-4 text-white">
+            <div class="font-bold text-lg">Featured Model: <span class="text-accent">Jake Strong</span></div>
+            <div class="text-sm">Straight & Gay Scenes • Top Rated</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- Main Content Grid -->
+  <main class="container mx-auto px-4 flex flex-col lg:flex-row gap-10 relative z-10 mt-[-3rem]">
+    <!-- Main Column -->
+    <div class="flex-1 flex flex-col gap-12">
+      <!-- Featured Slider -->
+      <section>
+        <h2 class="text-2xl font-bold mb-4 flex items-center gap-2"><span class="fa-solid fa-star text-accent"></span> Featured</h2>
+        <div class="swiper featuredSwiper rounded-2xl overflow-hidden shadow-neumorph">
+          <div class="swiper-wrapper">
+            <div class="swiper-slide">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center glass-card p-8">
+                <img src="https://picsum.photos/id/1005/400/400" alt="Model Jake Strong" class="rounded-2xl w-full h-60 object-cover"/>
+                <div>
+                  <h3 class="text-xl font-bold text-primary-dark dark:text-primary-light">Jake Strong</h3>
+                  <div class="text-primary-dark/70 dark:text-primary-light/70 mb-2">Straight & Gay | Top Rated</div>
+                  <p>Jake is making waves in both straight and gay scenes. His chiseled looks and charisma have landed him in dozens of top-rated productions this year.</p>
+                  <a href="models.html#jake-strong" class="mt-4 inline-block text-primary font-bold hover:underline">View Profile</a>
+                </div>
+              </div>
+            </div>
+            <div class="swiper-slide">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center glass-card p-8">
+                <img src="https://picsum.photos/id/1025/400/400" alt="News" class="rounded-2xl w-full h-60 object-cover"/>
+                <div>
+                  <h3 class="text-xl font-bold text-primary-dark dark:text-primary-light">Industry News: New Studio Launch</h3>
+                  <div class="text-primary-dark/70 dark:text-primary-light/70 mb-2">Trending</div>
+                  <p>Major industry players are launching a new studio focused entirely on inclusive male-focused productions. Read all about it in our exclusive interview.</p>
+                  <a href="news.html#studio-launch" class="mt-4 inline-block text-primary font-bold hover:underline">Read More</a>
+                </div>
+              </div>
+            </div>
+            <div class="swiper-slide">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center glass-card p-8">
+                <img src="https://picsum.photos/id/1027/400/400" alt="Video Hot Pick" class="rounded-2xl w-full h-60 object-cover"/>
+                <div>
+                  <h3 class="text-xl font-bold text-primary-dark dark:text-primary-light">Hot Video: 'Locker Room Heat'</h3>
+                  <div class="text-primary-dark/70 dark:text-primary-light/70 mb-2">Most Popular</div>
+                  <p>This week’s most-watched video features top male stars in a steamy, athletic fantasy. See why fans are raving about it!</p>
+                  <a href="videos.html#locker-room-heat" class="mt-4 inline-block text-primary font-bold hover:underline">View Video</a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="swiper-pagination"></div>
+          <div class="swiper-button-next"></div>
+          <div class="swiper-button-prev"></div>
+        </div>
+      </section>
+      <!-- Latest News -->
+      <section>
+        <h2 class="text-2xl font-bold mb-4 flex items-center gap-2"><span class="fa-solid fa-newspaper text-accent"></span> Latest News</h2>
+        <div class="grid md:grid-cols-2 gap-8">
+          <article class="glass-card p-6 hover:shadow-xl transition relative">
+            <img src="https://picsum.photos/id/1052/400/220" alt="News 1" class="rounded-xl mb-4 w-full h-44 object-cover"/>
+            <h3 class="text-lg font-bold mb-2">Rising Star: Chris Flex Debuts in Dual Genres</h3>
+            <div class="text-sm text-primary-dark/60 dark:text-primary-light/60 mb-2">by Alex, 2h ago • <span class="fa-solid fa-tag text-accent"></span> <span class="inline-flex gap-1">#debut #bisexual</span></div>
+            <p class="mb-4">Chris Flex’s unique appeal is breaking boundaries as he stars in both gay and straight scenes. Our exclusive interview inside!</p>
+            <a href="news.html#chris-flex" class="text-primary font-bold hover:underline">Read More</a>
+          </article>
+          <article class="glass-card p-6 hover:shadow-xl transition relative">
+            <img src="https://picsum.photos/id/1062/400/220" alt="News 2" class="rounded-xl mb-4 w-full h-44 object-cover"/>
+            <h3 class="text-lg font-bold mb-2">Behind the Scenes: How Studios Cast Top Male Talent</h3>
+            <div class="text-sm text-primary-dark/60 dark:text-primary-light/60 mb-2">by Jamie, 4h ago • <span class="fa-solid fa-tag text-accent"></span> <span class="inline-flex gap-1">#casting #industry</span></div>
+            <p class="mb-4">Ever wondered how your faves get discovered? We go inside the casting process with industry insiders.</p>
+            <a href="news.html#casting-process" class="text-primary font-bold hover:underline">Read More</a>
+          </article>
+        </div>
+      </section>
+      <!-- Model Database Preview -->
+      <section>
+        <h2 class="text-2xl font-bold mb-4 flex items-center gap-2"><span class="fa-solid fa-users text-accent"></span> Model Database</h2>
+        <form class="mb-6 flex gap-2 max-w-xl" id="modelSearchForm" autocomplete="off">
+          <input type="text" id="modelSearch" class="flex-1 px-4 py-2 glass-card outline-none focus:ring-2 ring-primary" placeholder="Search male models..." aria-label="Search models" />
+          <select id="modelCategory" class="px-4 py-2 glass-card outline-none focus:ring-2 ring-primary" aria-label="Filter by category">
+            <option value="">All</option>
+            <option value="gay">Gay</option>
+            <option value="straight">Straight</option>
+            <option value="bisexual">Bisexual</option>
+          </select>
+        </form>
+        <div id="modelGrid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          <!-- JS will populate -->
+        </div>
+        <div id="noModels" class="hidden text-primary-dark dark:text-primary-light mt-4 text-center">No models found.</div>
+        <div class="mt-6 text-right">
+          <a href="models.html" class="font-bold text-primary hover:underline">View All Models &rarr;</a>
+        </div>
+      </section>
+      <!-- Video Database Preview -->
+      <section>
+        <h2 class="text-2xl font-bold mb-4 flex items-center gap-2"><span class="fa-solid fa-film text-accent"></span> Latest Videos</h2>
+        <div id="videoGrid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          <!-- JS will populate -->
+        </div>
+        <div class="mt-6 text-right">
+          <a href="videos.html" class="font-bold text-primary hover:underline">Browse All Videos &rarr;</a>
+        </div>
+      </section>
+      <!-- Newsletter Signup & Submission -->
+      <section class="grid md:grid-cols-2 gap-8">
+        <div class="glass-card p-8">
+          <h2 class="text-xl font-bold mb-4"><span class="fa-solid fa-envelope text-accent"></span> Join the Newsletter</h2>
+          <form id="newsletterForm" class="flex flex-col gap-4" autocomplete="off" aria-label="Newsletter Signup">
+            <input type="email" id="newsletterEmail" class="px-4 py-3 rounded-lg outline-none glass-card focus:ring-2 ring-primary" placeholder="Your email address" required aria-required="true" />
+            <button type="submit" class="px-6 py-3 bg-primary text-white font-bold rounded-xl shadow-neumorph hover:bg-accent transition">Subscribe</button>
+            <div id="newsletterMsg" class="text-sm mt-1"></div>
+          </form>
+        </div>
+        <div class="glass-card p-8">
+          <h2 class="text-xl font-bold mb-4"><span class="fa-solid fa-message text-accent"></span> Send Us a Message</h2>
+          <form id="messageForm" class="flex flex-col gap-4" autocomplete="off" aria-label="Submit Message">
+            <textarea maxlength="1000" id="userMessage" rows="4" class="px-4 py-3 rounded-lg outline-none glass-card focus:ring-2 ring-primary" placeholder="Your message (max 1000 chars)" required aria-required="true"></textarea>
+            <button type="submit" class="px-6 py-3 bg-primary text-white font-bold rounded-xl shadow-neumorph hover:bg-accent transition">Send Message</button>
+            <div id="messageMsg" class="text-sm mt-1"></div>
+          </form>
+        </div>
+      </section>
+      <!-- Testimonials -->
+      <section>
+        <h2 class="text-2xl font-bold mb-4 flex items-center gap-2"><span class="fa-solid fa-comments text-accent"></span> Community Reviews</h2>
+        <div class="swiper testimonialSwiper rounded-xl overflow-hidden">
+          <div class="swiper-wrapper">
+            <div class="swiper-slide glass-card p-8">
+              <blockquote class="text-lg mb-4">“Finally, a one-stop blog for all the best male models. Love the news and the model spotlights!”</blockquote>
+              <div class="flex items-center gap-3">
+                <img src="https://picsum.photos/id/1012/48/48" alt="User" class="rounded-full w-12 h-12"/>
+                <div>
+                  <div class="font-bold">Mike B.</div>
+                  <div class="text-xs text-primary-dark/60 dark:text-primary-light/60">Fan, London</div>
+                </div>
+              </div>
+            </div>
+            <div class="swiper-slide glass-card p-8">
+              <blockquote class="text-lg mb-4">“The video database is 🔥. I never miss the latest releases anymore.”</blockquote>
+              <div class="flex items-center gap-3">
+                <img src="https://picsum.photos/id/1015/48/48" alt="User" class="rounded-full w-12 h-12"/>
+                <div>
+                  <div class="font-bold">Javier S.</div>
+                  <div class="text-xs text-primary-dark/60 dark:text-primary-light/60">Fan, Madrid</div>
+                </div>
+              </div>
+            </div>
+            <div class="swiper-slide glass-card p-8">
+              <blockquote class="text-lg mb-4">“Great interface, love the dark mode and how easy it is to browse top models.”</blockquote>
+              <div class="flex items-center gap-3">
+                <img src="https://picsum.photos/id/1023/48/48" alt="User" class="rounded-full w-12 h-12"/>
+                <div>
+                  <div class="font-bold">Danny R.</div>
+                  <div class="text-xs text-primary-dark/60 dark:text-primary-light/60">Fan, NYC</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="swiper-pagination"></div>
+        </div>
+      </section>
+      <!-- About & Team -->
+      <section>
+        <h2 class="text-2xl font-bold mb-4 flex items-center gap-2"><span class="fa-solid fa-user-tie text-accent"></span> About HornyBroReviews</h2>
+        <div class="glass-card p-8 flex flex-col md:flex-row gap-8 items-center">
+          <img src="https://picsum.photos/id/1069/120/120" alt="Editor" class="rounded-full w-28 h-28 object-cover border-4 border-primary/20"/>
+          <div>
+            <p class="mb-2">HornyBroReviews.com is run by a passionate team of fans and industry insiders. We believe in celebrating the hottest male talent across adult genres, with a focus on news, reviews, and honest recommendations.</p>
+            <div class="mt-2 text-sm text-primary-dark/60 dark:text-primary-light/60">
+              <span class="fa-solid fa-envelope mr-1"></span> Email us at <a href="mailto:contact@hornybroreviews.com" class="text-primary hover:underline">contact@hornybroreviews.com</a>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- Contact -->
+      <section id="contact">
+        <h2 class="text-2xl font-bold mb-4 flex items-center gap-2"><span class="fa-solid fa-phone text-accent"></span> Contact</h2>
+        <div class="glass-card p-8">
+          <p class="mb-2">For media, advertising, or business inquiries, email us at <a class="text-primary hover:underline" href="mailto:business@hornybroreviews.com">business@hornybroreviews.com</a>.</p>
+          <p class="text-sm text-primary-dark/60 dark:text-primary-light/60">We respond within 24-48 hours. Fan messages? Use the form above!</p>
+        </div>
+      </section>
+    </div>
+    <!-- Sidebar -->
+    <aside class="sidebar sticky top-28 max-h-[calc(100vh-6rem)] overflow-y-auto min-w-[320px] w-full lg:w-80 flex-shrink-0 flex flex-col gap-10">
+      <!-- Top Rated Models -->
+      <section>
+        <h3 class="text-xl font-bold mb-2 flex items-center gap-2"><span class="fa-solid fa-trophy text-accent"></span> Top Rated Models</h3>
+        <ul id="topModels" class="flex flex-col gap-3">
+          <!-- JS will populate -->
+        </ul>
+      </section>
+      <!-- Popular Videos -->
+      <section>
+        <h3 class="text-xl font-bold mb-2 flex items-center gap-2"><span class="fa-solid fa-fire text-accent"></span> Popular Videos</h3>
+        <ul id="topVideos" class="flex flex-col gap-3">
+          <!-- JS will populate -->
+        </ul>
+      </section>
+      <!-- Blog Tags -->
+      <section>
+        <h3 class="text-xl font-bold mb-2 flex items-center gap-2"><span class="fa-solid fa-tags text-accent"></span> Popular Tags</h3>
+        <div id="popularTags" class="flex flex-wrap gap-2">
+          <!-- JS will populate -->
+        </div>
+      </section>
+      <!-- Social / Newsletter -->
+      <section class="glass-card p-4 flex flex-col gap-2">
+        <div class="flex gap-4">
+          <a href="https://twitter.com/hornybroreviews" target="_blank" aria-label="Twitter" class="text-primary text-2xl hover:text-accent transition"><span class="fa-brands fa-twitter"></span></a>
+          <a href="https://instagram.com/hornybroreviews" target="_blank" aria-label="Instagram" class="text-primary text-2xl hover:text-accent transition"><span class="fa-brands fa-instagram"></span></a>
+        </div>
+        <div class="text-xs mt-3">Follow @hornybroreviews</div>
+      </section>
+    </aside>
+  </main>
+  <!-- Footer -->
+  <footer class="mt-24 py-10 border-t border-primary/10 dark:border-primary/40 text-center bg-white/60 dark:bg-primary-dark/80 backdrop-blur-glass">
+    <div class="container mx-auto flex flex-col md:flex-row justify-between items-center gap-2">
+      <div class="text-primary-dark/70 dark:text-primary-light/70 text-sm">© 2024 HornyBroReviews.com. All rights reserved.</div>
+      <div class="flex gap-4 text-primary-dark/70 dark:text-primary-light/70 text-xs">
+        <a href="#" class="hover:text-primary">Privacy Policy</a>
+        <a href="#" class="hover:text-primary">Terms of Service</a>
+      </div>
+    </div>
+  </footer>
+  <!-- Model Modal -->
+  <div id="modelModal" class="fixed inset-0 z-[90] bg-primary-dark/80 flex items-center justify-center hidden transition-opacity duration-300">
+    <div class="glass-card max-w-lg w-full p-8 relative">
+      <button id="closeModelModal" class="absolute top-2 right-2 text-2xl text-primary-dark dark:text-primary-light hover:text-accent" aria-label="Close" tabindex="0">
+        <span class="fa-solid fa-times"></span>
+      </button>
+      <div id="modelModalContent"><!-- JS will populate --></div>
+    </div>
+  </div>
+  <!-- Swiper JS -->
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <!-- DATA & JS -->
+  <script>
+    // Accessibility dark mode toggle
+    const html = document.documentElement;
+    const darkBtn = document.getElementById('toggleDark');
+    const darkIcon = document.getElementById('darkIcon');
+    const lightIcon = document.getElementById('lightIcon');
+    function setDarkMode(isDark) {
+      if (isDark) {
+        html.classList.add('dark');
+        darkIcon.classList.add('hidden');
+        lightIcon.classList.remove('hidden');
+      } else {
+        html.classList.remove('dark');
+        darkIcon.classList.remove('hidden');
+        lightIcon.classList.add('hidden');
+      }
+    }
+    // Try to respect user preference, but don't use storage (sandbox)
+    setDarkMode(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    darkBtn.addEventListener('click', () => setDarkMode(!html.classList.contains('dark')));
+    // Mobile nav
+    document.getElementById('mobileMenuBtn').addEventListener('click',()=>{document.getElementById('mobileMenu').classList.remove('hidden')});
+    document.getElementById('closeMobileMenu').addEventListener('click',()=>{document.getElementById('mobileMenu').classList.add('hidden')});
+    // Age Consent Modal
+    const ageModal = document.getElementById('ageConsentModal');
+    document.body.classList.add('age-gated');
+    document.getElementById('ageYes').onclick = () => {
+      ageModal.classList.add('hidden');
+      document.body.classList.remove('age-gated');
+    };
+    document.getElementById('ageNo').onclick = () => {
+      ageModal.innerHTML = '<div class="glass-card max-w-md w-full px-8 py-10 text-center shadow-xl"><h2 class="text-2xl font-bold mb-4 text-primary-dark dark:text-primary-light">Access Denied</h2><p class="mb-6 text-lg">Sorry, you must be 18+ to enter this site.</p></div>';
+      setTimeout(()=>window.location.href='https://google.com',2500);
+    };
+    // TSParticles animated blue background
+    tsParticles.load('particlesBg', {
+      particles: {
+        number: { value: 60, density: { enable: true, value_area: 800 } },
+        color: { value: '#1e90ff' },
+        opacity: { value: 0.18 },
+        size: { value: 4, random: true },
+        move: { enable: true, speed: 0.8, direction: 'none', out_mode: 'out' },
+        shape: { type: 'circle' },
+        links: { enable: true, color: '#1e90ff', opacity: 0.09 },
+      },
+      interactivity: {
+        events: { onhover: { enable: false }, onclick: { enable: false } }
+      },
+      retina_detect: true,
+      background: { color: 'transparent' }
+    });
+    // Swiper: Featured, Testimonials
+    new Swiper('.featuredSwiper', {
+      loop: true,
+      autoplay: { delay: 4500, disableOnInteraction: false },
+      pagination: { el: '.featuredSwiper .swiper-pagination', clickable: true },
+      navigation: {
+        nextEl: '.featuredSwiper .swiper-button-next',
+        prevEl: '.featuredSwiper .swiper-button-prev'
+      },
+      effect: 'slide',
+      speed: 900,
+    });
+    new Swiper('.testimonialSwiper', {
+      loop: true,
+      autoplay: { delay: 7000, disableOnInteraction: false },
+      pagination: { el: '.testimonialSwiper .swiper-pagination', clickable: true },
+      effect: 'fade',
+      speed: 700,
+    });
+    // Model Data
+    const models = [
+      { id:'jake-strong', name:'Jake Strong', img:'https://picsum.photos/id/1011/400/400', tags:['straight','gay'], topRated:true, bio:'Jake is a highly sought-after star in both gay and straight productions, known for his versatility and high energy.' },
+      { id:'chris-flex', name:'Chris Flex', img:'https://picsum.photos/id/1012/400/400', tags:['bisexual'], topRated:true, bio:'Chris Flex is a rising star, breaking boundaries by starring in both gay and straight scenes.' },
+      { id:'marco-v', name:'Marco V', img:'https://picsum.photos/id/1015/400/400', tags:['gay'], topRated:false, bio:'A fan favorite in the gay scene, Marco is known for his athletic build and charming smile.' },
+      { id:'lucas-blue', name:'Lucas Blue', img:'https://picsum.photos/id/1013/400/400', tags:['straight'], topRated:false, bio:'Lucas is a top straight performer with a cult following among fans.' },
+      { id:'dylan-steele', name:'Dylan Steele', img:'https://picsum.photos/id/1014/400/400', tags:['straight','gay'], topRated:true, bio:'Dylan Steele has wowed audiences with his powerful performances and approachable personality.' },
+      { id:'alex-reed', name:'Alex Reed', img:'https://picsum.photos/id/1016/400/400', tags:['gay'], topRated:false, bio:'Alex Reed is a charismatic new face in the gay scene, quickly winning over fans.' },
+    ];
+    // Video Data
+    const videos = [
+      { id:'locker-room-heat', title:"Locker Room Heat", img:"https://picsum.photos/id/1027/400/220", tags:["gay","athletic"], popular:true, desc:"Top male stars in a steamy, athletic fantasy." },
+      { id:'beach-bros', title:"Beach Bros", img:"https://picsum.photos/id/1028/400/220", tags:["straight","outdoor"], popular:true, desc:"Sunny fun with Jake and Lucas at the beach." },
+      { id:'office-affair', title:"Office Affair", img:"https://picsum.photos/id/1029/400/220", tags:["bisexual","workplace"], popular:false, desc:"When co-workers get hands-on after hours." },
+      { id:'afterhours', title:"After Hours", img:"https://picsum.photos/id/1030/400/220", tags:["gay"], popular:true, desc:"A late night encounter with Chris and Marco." },
+      { id:'poolside', title:"Poolside", img:"https://picsum.photos/id/1031/400/220", tags:["straight"], popular:false, desc:"Dylan’s summer pool seduction." },
+      { id:'studio-welcome', title:"Studio Welcome", img:"https://picsum.photos/id/1032/400/220", tags:["gay","new"], popular:false, desc:"Alex’s debut in the latest studio production." },
+    ];
+    // Blog Tags
+    const tags = [
+      { tag: "gay", count: 44 },
+      { tag: "straight", count: 29 },
+      { tag: "bisexual", count: 11 },
+      { tag: "athletic", count: 9 },
+      { tag: "outdoor", count: 9 },
+      { tag: "new", count: 7 },
+      { tag: "casting", count: 6 },
+      { tag: "industry", count: 6 },
+      { tag: "workplace", count: 4 }
+    ];
+    // Populate Model Grid (preview 3)
+    function renderModels(filter='',category='') {
+      const grid = document.getElementById('modelGrid');
+      const val = filter.toLowerCase();
+      const filtered = models.filter(m =>
+        (!val || m.name.toLowerCase().includes(val)) &&
+        (!category || m.tags.includes(category))
+      );
+      grid.innerHTML = filtered.slice(0,3).map(m=>`
+        <div tabindex="0" role="button" aria-label="View details for ${m.name}" class="glass-card p-4 group hover:shadow-xl transition cursor-pointer" data-modal="${m.id}">
+          <img src="${m.img}" alt="Model ${m.name}" class="rounded-xl mb-3 w-full h-40 object-cover"/>
+          <div class="font-bold text-lg text-primary-dark dark:text-primary-light">${m.name}</div>
+          <div class="flex gap-2 mt-2">${m.tags.map(t=>`<span class="px-2 py-1 bg-accent/20 text-accent rounded-full text-xs">${t}</span>`).join('')}</div>
+        </div>
+      `).join('');
+      document.getElementById('noModels').classList.toggle('hidden', filtered.length > 0);
+      // Modal open
+      Array.from(grid.querySelectorAll('[data-modal]')).forEach(el => {
+        el.onclick = () => showModelModal(el.getAttribute('data-modal'));
+        el.onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') showModelModal(el.getAttribute('data-modal')); }
+      });
+    }
+    renderModels();
+    document.getElementById('modelSearchForm').onsubmit = e => e.preventDefault();
+    document.getElementById('modelSearch').oninput = e => renderModels(e.target.value, document.getElementById('modelCategory').value);
+    document.getElementById('modelCategory').onchange = e => renderModels(document.getElementById('modelSearch').value, e.target.value);
+    // Model Modal
+    function showModelModal(id) {
+      const m = models.find(m=>m.id===id);
+      if (m) {
+        document.getElementById('modelModalContent').innerHTML = `
+          <div class="flex flex-col md:flex-row gap-6 items-center">
+            <img src="${m.img}" alt="${m.name}" class="rounded-2xl w-40 h-40 object-cover"/>
+            <div>
+              <div class="font-bold text-2xl mb-1">${m.name}</div>
+              <div class="flex gap-2 mb-2">${m.tags.map(t=>`<span class="px-2 py-1 bg-accent/20 text-accent rounded-full text-xs">${t}</span>`).join('')}</div>
+              <div class="mb-2 text-sm text-primary-dark/70 dark:text-primary-light/70">${m.topRated?'<span class="fa-solid fa-trophy text-accent"></span> Top Rated':''}</div>
+              <div class="mb-2">${m.bio}</div>
+            </div>
+          </div>
+        `;
+        document.getElementById('modelModal').classList.remove('hidden');
+      }
+    }
+    document.getElementById('closeModelModal').onclick = () => document.getElementById('modelModal').classList.add('hidden');
+    // Populate Video Grid (preview 3)
+    function renderVideos() {
+      const grid = document.getElementById('videoGrid');
+      grid.innerHTML = videos.slice(0,3).map(v=>`
+        <div class="glass-card p-4 hover:shadow-xl transition">
+          <img src="${v.img}" alt="Video ${v.title}" class="rounded-xl mb-3 w-full h-40 object-cover"/>
+          <div class="font-bold text-lg text-primary-dark dark:text-primary-light">${v.title}</div>
+          <div class="flex gap-2 mt-2">${v.tags.map(t=>`<span class="px-2 py-1 bg-accent/20 text-accent rounded-full text-xs">${t}</span>`).join('')}</div>
+          <div class="mt-2 text-sm">${v.desc}</div>
+          <a href="videos.html#${v.id}" class="mt-3 inline-block text-primary font-bold hover:underline">More Info</a>
+        </div>
+      `).join('');
+    }
+    renderVideos();
+    // Top Rated Models Sidebar
+    document.getElementById('topModels').innerHTML = models.filter(m=>m.topRated).slice(0,3).map(m=>`
+      <li class="glass-card flex items-center gap-3 p-2">
+        <img src="${m.img}" alt="${m.name}" class="rounded-full w-12 h-12 object-cover"/>
+        <div>
+          <div class="font-bold">${m.name}</div>
+          <div class="flex gap-1">${m.tags.map(t=>`<span class="text-xs bg-accent/20 text-accent rounded px-2">${t}</span>`).join('')}</div>
+        </div>
+      </li>
+    `).join('');
+    // Top Videos Sidebar
+    document.getElementById('topVideos').innerHTML = videos.filter(v=>v.popular).slice(0,3).map(v=>`
+      <li class="glass-card flex items-center gap-3 p-2">
+        <img src="${v.img}" alt="${v.title}" class="rounded-xl w-12 h-12 object-cover"/>
+        <div>
+          <div class="font-bold">${v.title}</div>
+          <div class="flex gap-1">${v.tags.map(t=>`<span class="text-xs bg-accent/20 text-accent rounded px-2">${t}</span>`).join('')}</div>
+        </div>
+      </li>
+    `).join('');
+    // Popular Tags Sidebar
+    document.getElementById('popularTags').innerHTML = tags.slice(0,7).map(t=>`
+      <span class="bg-accent/20 text-accent px-3 py-1 rounded-full text-xs flex items-center gap-1">
+        <span class="fa-solid fa-hashtag"></span> ${t.tag} <span class="font-bold">${t.count}</span>
+      </span>
+    `).join('');
+    // Newsletter Signup
+    document.getElementById('newsletterForm').onsubmit = function(e) {
+      e.preventDefault();
+      const email = document.getElementById('newsletterEmail').value.trim();
+      const msg = document.getElementById('newsletterMsg');
+      if (!email.match(/^\S+@\S+\.\S+$/)) {
+        msg.innerHTML = '<span class="text-red-500">Please enter a valid email.</span>';
+        return;
+      }
+      msg.innerHTML = '<span class="text-green-600">Thank you for subscribing!</span>';
+      this.reset();
+    };
+    // Message Submission
+    document.getElementById('messageForm').onsubmit = function(e) {
+      e.preventDefault();
+      const text = document.getElementById('userMessage').value.trim();
+      const msg = document.getElementById('messageMsg');
+      if (!text) {
+        msg.innerHTML = '<span class="text-red-500">Message cannot be empty.</span>';
+        return;
+      }
+      msg.innerHTML = '<span class="text-green-600">Message sent! Thank you.</span>';
+      this.reset();
+    };
+    // Animate on scroll - ScrollReveal
+    ScrollReveal().reveal('section', { delay: 60, duration: 700, origin: 'bottom', distance: '30px', easing: 'ease', reset: false, cleanup: true });
+    // Accessibility: Keyboard close modal
+    window.addEventListener('keydown', e => {
+      if (e.key === 'Escape') document.getElementById('modelModal').classList.add('hidden');
+    });
+  </script>
+</body>
+</html>

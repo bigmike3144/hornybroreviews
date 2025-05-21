@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>Latest Industry News – HornyBroReviews.com</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+  <!-- Swiper.js (Slider) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
+  <!-- FontAwesome (Icons) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"/>
+  <!-- tParticles for background -->
+  <script src="https://cdn.jsdelivr.net/npm/tsparticles@3.1.0/tsparticles.bundle.min.js"></script>
+  <!-- ScrollReveal for animations -->
+  <script src="https://unpkg.com/scrollreveal"></script>
+  <!-- Custom Tailwind Config -->
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Montserrat', 'sans-serif'],
+          },
+          colors: {
+            primary: {
+              light: '#e4f1ff',
+              DEFAULT: '#1e90ff',
+              dark: '#003366',
+            },
+            accent: {
+              DEFAULT: '#38bdf8',
+              glass: '#e0f2fe80',
+            },
+            card: {
+              light: '#ffffffd9',
+              dark: '#172337d9'
+            }
+          },
+          boxShadow: {
+            glass: '0 4px 30px rgba(30,144,255,0.05)',
+            neumorph: '8px 8px 16px #b6d4f5, -8px -8px 16px #ffffff'
+          },
+          backdropBlur: {
+            glass: 'blur(16px)',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: 'Montserrat', sans-serif; }
+    .glass-card {
+      @apply bg-card-light dark:bg-card-dark backdrop-blur-glass shadow-glass rounded-xl border border-white/20 dark:border-slate-900/30 transition-colors;
+    }
+    .neumorph {
+      box-shadow: 8px 8px 16px #b6d4f5, -8px -8px 16px #ffffff;
+    }
+    .sidebar::-webkit-scrollbar { display: none; }
+    .noise-bg {
+      pointer-events:none;
+      position:fixed;
+      inset:0;
+      background-image:url('https://www.transparenttextures.com/patterns/noise.png');
+      opacity:.06;
+      z-index:0;
+      mix-blend-mode:overlay;
+    }
+    .swiper-button-next,.swiper-button-prev{color:#1e90ff !important}
+    body.age-gated {overflow: hidden;}
+  </style>
+</head>
+<body class="bg-primary-light dark:bg-primary-dark text-primary-dark dark:text-primary-light transition-colors duration-500 relative">
+  <div id="noise" class="noise-bg"></div>
+  <!-- Age Consent Popup (identical to index.html) -->
+  <div id="ageConsentModal" class="fixed inset-0 z-[100] bg-primary-dark/90 flex items-center justify-center transition-opacity duration-300">
+    <div class="glass-card max-w-md w-full px-8 py-10 text-center shadow-xl">
+      <h2 class="text-2xl font-bold mb-4 text-primary-dark dark:text-primary-light">Age Verification</h2>
+      <p class="mb-6 text-lg">Are you 18 years old or older?</p>
+      <div class="flex justify-center gap-8 mb-2">
+        <button id="ageYes" class="px-8 py-2 bg-primary rounded-lg font-bold text-white hover:bg-accent transition">Yes</button>
+        <button id="ageNo" class="px-8 py-2 bg-slate-300 text-primary-dark rounded-lg font-bold hover:bg-red-400 hover:text-white transition">No</button>
+      </div>
+      <p class="text-xs text-slate-500 mt-2">You must be 18+ to enter this site.</p>
+    </div>
+  </div>
+  <!-- Header & Navbar -->
+  <header class="sticky top-0 z-50 bg-white/80 dark:bg-primary-dark/80 backdrop-blur-glass shadow-md transition-colors">
+    <div class="container mx-auto flex items-center justify-between px-4 py-3">
+      <a href="index.html" class="flex items-center gap-2 text-2xl font-extrabold tracking-wide text-primary-dark dark:text-primary-light">
+        <span class="fa-solid fa-fire text-accent"></span> HornyBroReviews
+      </a>
+      <nav class="hidden md:flex gap-8 items-center font-semibold">
+        <a href="index.html" class="hover:text-primary">Home</a>
+        <a href="news.html" class="hover:text-primary text-primary font-bold border-b-2 border-primary pb-1">News</a>
+        <a href="models.html" class="hover:text-primary">Models</a>
+        <a href="videos.html" class="hover:text-primary">Videos</a>
+        <a href="#contact" class="hover:text-primary">Contact</a>
+      </nav>
+      <div class="flex gap-4 items-center">
+        <button id="toggleDark" class="w-10 h-10 flex items-center justify-center rounded-full bg-primary/10 hover:bg-primary/20 dark:bg-primary-dark/30 dark:hover:bg-primary-dark/50 transition" aria-label="Toggle dark mode">
+          <span id="darkIcon" class="fa-solid fa-moon text-lg"></span>
+          <span id="lightIcon" class="fa-solid fa-sun text-lg hidden"></span>
+        </button>
+        <button class="md:hidden" id="mobileMenuBtn" aria-label="Open menu">
+          <span class="fa-solid fa-bars text-2xl"></span>
+        </button>
+      </div>
+    </div>
+    <div id="mobileMenu" class="hidden fixed inset-0 z-40 bg-white/95 dark:bg-primary-dark/95 p-8 flex flex-col gap-8 text-xl">
+      <button class="self-end mb-4" id="closeMobileMenu" aria-label="Close menu"><span class="fa-solid fa-times text-2xl"></span></button>
+      <a href="index.html" class="hover:text-primary">Home</a>
+      <a href="news.html" class="hover:text-primary text-primary font-bold">News</a>
+      <a href="models.html" class="hover:text-primary">Models</a>
+      <a href="videos.html" class="hover:text-primary">Videos</a>
+      <a href="#contact" class="hover:text-primary">Contact</a>
+    </div>
+  </header>
+  <!-- Hero Section -->
+  <section class="relative overflow-hidden py-16 md:py-24">
+    <div id="particlesBg" class="absolute inset-0 z-0"></div>
+    <div class="relative z-10 container mx-auto flex flex-col md:flex-row items-center gap-12 px-4">
+      <div class="flex-1">
+        <h1 class="text-4xl md:text-6xl font-extrabold leading-tight mb-6 text-primary-dark dark:text-primary-light drop-shadow-lg">Latest Industry News</h1>
+        <p class="text-lg md:text-2xl mb-8 text-primary-dark/80 dark:text-primary-light/80">
+          Stay up to date with the hottest headlines and exclusive stories from the world of male-centric adult entertainment.
+        </p>
+        <a href="#news" class="inline-block px-8 py-3 bg-primary text-white text-lg font-bold rounded-xl shadow-neumorph hover:bg-accent transition mr-4">Skip to News</a>
+      </div>
+      <div class="flex-1 flex justify-center md:justify-end">
+        <div class="relative rounded-3xl overflow-hidden shadow-xl glass-card w-80 h-72 md:w-96 md:h-80">
+          <img src="https://picsum.photos/id/1062/400/320" alt="Newsroom" class="w-full h-full object-cover"/>
+          <div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-primary-dark/90 to-transparent p-4 text-white">
+            <div class="font-bold text-lg">Exclusive: Studio Launches & Model Interviews</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- Main Content Grid -->
+  <main class="container mx-auto px-4 flex flex-col lg:flex-row gap-10 relative z-10 mt-[-2.5rem]">
+    <!-- Main Column -->
+    <div class="flex-1 flex flex-col gap-12">
+      <!-- Featured Slider -->
+      <section>
+        <h2 class="text-2xl font-bold mb-4 flex items-center gap-2"><span class="fa-solid fa-star text-accent"></span> Featured Stories</h2>
+        <div class="swiper featuredSwiper rounded-2xl overflow-hidden shadow-neumorph">
+          <div class="swiper-wrapper">
+            <div class="swiper-slide">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center glass-card p-8">
+                <img src="https://picsum.photos/id/1025/400/400" alt="Studio Launch" class="rounded-2xl w-full h-60 object-cover"/>
+                <div>
+                  <h3 class="text-xl font-bold text-primary-dark dark:text-primary-light">Major Studio Launches New All-Male Division</h3>
+                  <div class="text-primary-dark/70 dark:text-primary-light/70 mb-2">#industry #launch</div>
+                  <p>
+                    This month marks the debut of a ground-breaking studio division focused entirely on male talent and inclusive productions. We sat down with the creative team to discuss their vision and upcoming projects.
+                  </p>
+                  <a href="#studio-launch" class="mt-4 inline-block text-primary font-bold hover:underline">Full Story</a>
+                </div>
+              </div>
+            </div>
+            <div class="swiper-slide">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center glass-card p-8">
+                <img src="https://picsum.photos/id/1052/400/400" alt="Chris Flex Debut" class="rounded-2xl w-full h-60 object-cover"/>
+                <div>
+                  <h3 class="text-xl font-bold text-primary-dark dark:text-primary-light">Spotlight: Chris Flex’s Dual Debut</h3>
+                  <div class="text-primary-dark/70 dark:text-primary-light/70 mb-2">#debut #bisexual</div>
+                  <p>
+                    Chris Flex smashes stereotypes as he bursts onto the scene in both gay and straight productions. Discover his journey, inspirations, and future plans in our exclusive interview.
+                  </p>
+                  <a href="#chris-flex" class="mt-4 inline-block text-primary font-bold hover:underline">Read Interview</a>
+                </div>
+              </div>
+            </div>
+            <div class="swiper-slide">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center glass-card p-8">
+                <img src="https://picsum.photos/id/1016/400/400" alt="Casting" class="rounded-2xl w-full h-60 object-cover"/>
+                <div>
+                  <h3 class="text-xl font-bold text-primary-dark dark:text-primary-light">Behind the Scenes: Casting the Next Big Star</h3>
+                  <div class="text-primary-dark/70 dark:text-primary-light/70 mb-2">#casting #industry</div>
+                  <p>
+                    Ever wondered how the hottest male talent is discovered? We go behind the curtain to reveal the secrets of industry casting.
+                  </p>
+                  <a href="#casting-process" class="mt-4 inline-block text-primary font-bold hover:underline">More Details</a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="swiper-pagination"></div>
+          <div class="swiper-button-next"></div>
+          <div class="swiper-button-prev"></div>
+        </div>
+      </section>
+      <!-- News Articles Grid -->
+      <section id="news">
+        <h2 class="text-2xl font-bold mb-4 flex items-center gap-2"><span class="fa-solid fa-newspaper text-accent"></span> All News & Articles</h2>
+        <div class="mb-6 flex flex-wrap gap-2">
+          <button class="bg-accent/20 text-accent px-4 py-1 rounded-full text-sm font-bold filter-tag" data-tag="">All</button>
+          <button class="bg-accent/20 text-accent px-4 py-1 rounded-full text-sm filter-tag" data-tag="industry">#industry</button>
+          <button class="bg-accent/20 text-accent px-4 py-1 rounded-full text-sm filter-tag" data-tag="gay">#gay</button>
+          <button class="bg-accent/20 text-accent px-4 py-1 rounded-full text-sm filter-tag" data-tag="straight">#straight</button>
+          <button class="bg-accent/20 text-accent px-4 py-1 rounded-full text-sm filter-tag" data-tag="bisexual">#bisexual</button>
+          <button class="bg-accent/20 text-accent px-4 py-1 rounded-full text-sm filter-tag" data-tag="casting">#casting</button>
+          <button class="bg-accent/20 text-accent px-4 py-1 rounded-full text-sm filter-tag" data-tag="debut">#debut</button>
+        </div>
+        <div class="grid md:grid-cols-2 gap-8" id="newsGrid">
+          <!-- JS populates -->
+        </div>
+        <div id="noNews" class="hidden text-primary-dark dark:text-primary-light mt-4 text-center">No articles found for this tag.</div>
+      </section>
+      <!-- Newsletter & Submission (reuse from index) -->
+      <section class="grid md:grid-cols-2 gap-8">
+        <div class="glass-card p-8">
+          <h2 class="text-xl font-bold mb-4"><span class="fa-solid fa-envelope text-accent"></span> Join the Newsletter</h2>
+          <form id="newsletterForm" class="flex flex-col gap-4" autocomplete="off" aria-label="Newsletter Signup">
+            <input type="email" id="newsletterEmail" class="px-4 py-3 rounded-lg outline-none glass-card focus:ring-2 ring-primary" placeholder="Your email address" required aria-required="true" />
+            <button type="submit" class="px-6 py-3 bg-primary text-white font-bold rounded-xl shadow-neumorph hover:bg-accent transition">Subscribe</button>
+            <div id="newsletterMsg" class="text-sm mt-1"></div>
+          </form>
+        </div>
+        <div class="glass-card p-8">
+          <h2 class="text-xl font-bold mb-4"><span class="fa-solid fa-message text-accent"></span> Send Us a Message</h2>
+          <form id="messageForm" class="flex flex-col gap-4" autocomplete="off" aria-label="Submit Message">
+            <textarea maxlength="1000" id="userMessage" rows="4" class="px-4 py-3 rounded-lg outline-none glass-card focus:ring-2 ring-primary" placeholder="Your message (max 1000 chars)" required aria-required="true"></textarea>
+            <button type="submit" class="px-6 py-3 bg-primary text-white font-bold rounded-xl shadow-neumorph hover:bg-accent transition">Send Message</button>
+            <div id="messageMsg" class="text-sm mt-1"></div>
+          </form>
+        </div>
+      </section>
+      <!-- Contact -->
+      <section id="contact">
+        <h2 class="text-2xl font-bold mb-4 flex items-center gap-2"><span class="fa-solid fa-phone text-accent"></span> Contact</h2>
+        <div class="glass-card p-8">
+          <p class="mb-2">For media, advertising, or business inquiries, email us at <a class="text-primary hover:underline" href="mailto:business@hornybroreviews.com">business@hornybroreviews.com</a>.</p>
+          <p class="text-sm text-primary-dark/60 dark:text-primary-light/60">We respond within 24-48 hours. Fan messages? Use the form above!</p>
+        </div>
+      </section>
+    </div>
+    <!-- Sidebar -->
+    <aside class="sidebar sticky top-28 max-h-[calc(100vh-6rem)] overflow-y-auto min-w-[320px] w-full lg:w-80 flex-shrink-0 flex flex-col gap-10">
+      <!-- Trending News -->
+      <section>
+        <h3 class="text-xl font-bold mb-2 flex items-center gap-2"><span class="fa-solid fa-bolt text-accent"></span> Trending Now</h3>
+        <ul id="trendingNews" class="flex flex-col gap-3">
+          <!-- JS populates -->
+        </ul>
+      </section>
+      <!-- Top Rated Models -->
+      <section>
+        <h3 class="text-xl font-bold mb-2 flex items-center gap-2"><span class="fa-solid fa-trophy text-accent"></span> Top Rated Models</h3>
+        <ul id="topModels" class="flex flex-col gap-3"></ul>
+      </section>
+      <!-- Popular Videos -->
+      <section>
+        <h3 class="text-xl font-bold mb-2 flex items-center gap-2"><span class="fa-solid fa-fire text-accent"></span> Popular Videos</h3>
+        <ul id="topVideos" class="flex flex-col gap-3"></ul>
+      </section>
+      <!-- Blog Tags -->
+      <section>
+        <h3 class="text-xl font-bold mb-2 flex items-center gap-2"><span class="fa-solid fa-tags text-accent"></span> Popular Tags</h3>
+        <div id="popularTags" class="flex flex-wrap gap-2"></div>
+      </section>
+      <!-- Social / Newsletter -->
+      <section class="glass-card p-4 flex flex-col gap-2">
+        <div class="flex gap-4">
+          <a href="https://twitter.com/hornybroreviews" target="_blank" aria-label="Twitter" class="text-primary text-2xl hover:text-accent transition"><span class="fa-brands fa-twitter"></span></a>
+          <a href="https://instagram.com/hornybroreviews" target="_blank" aria-label="Instagram" class="text-primary text-2xl hover:text-accent transition"><span class="fa-brands fa-instagram"></span></a>
+        </div>
+        <div class="text-xs mt-3">Follow @hornybroreviews</div>
+      </section>
+    </aside>
+  </main>
+  <!-- Footer -->
+  <footer class="mt-24 py-10 border-t border-primary/10 dark:border-primary/40 text-center bg-white/60 dark:bg-primary-dark/80 backdrop-blur-glass">
+    <div class="container mx-auto flex flex-col md:flex-row justify-between items-center gap-2">
+      <div class="text-primary-dark/70 dark:text-primary-light/70 text-sm">© 2024 HornyBroReviews.com. All rights reserved.</div>
+      <div class="flex gap-4 text-primary-dark/70 dark:text-primary-light/70 text-xs">
+        <a href="#" class="hover:text-primary">Privacy Policy</a>
+        <a href="#" class="hover:text-primary">Terms of Service</a>
+      </div>
+    </div>
+  </footer>
+  <!-- Swiper JS -->
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script>
+    // Dark Mode Toggle
+    const html = document.documentElement;
+    const darkBtn = document.getElementById('toggleDark');
+    const darkIcon = document.getElementById('darkIcon');
+    const lightIcon = document.getElementById('lightIcon');
+    function setDarkMode(isDark) {
+      if (isDark) {
+        html.classList.add('dark');
+        darkIcon.classList.add('hidden');
+        lightIcon.classList.remove('hidden');
+      } else {
+        html.classList.remove('dark');
+        darkIcon.classList.remove('hidden');
+        lightIcon.classList.add('hidden');
+      }
+    }
+    setDarkMode(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    darkBtn.addEventListener('click', () => setDarkMode(!html.classList.contains('dark')));
+    // Mobile nav
+    document.getElementById('mobileMenuBtn').addEventListener('click',()=>{document.getElementById('mobileMenu').classList.remove('hidden')});
+    document.getElementById('closeMobileMenu').addEventListener('click',()=>{document.getElementById('mobileMenu').classList.add('hidden')});
+    // Age Consent Modal
+    const ageModal = document.getElementById('ageConsentModal');
+    document.body.classList.add('age-gated');
+    document.getElementById('ageYes').onclick = () => {
+      ageModal.classList.add('hidden');
+      document.body.classList.remove('age-gated');
+    };
+    document.getElementById('ageNo').onclick = () => {
+      ageModal.innerHTML = '<div class="glass-card max-w-md w-full px-8 py-10 text-center shadow-xl"><h2 class="text-2xl font-bold mb-4 text-primary-dark dark:text-primary-light">Access Denied</h2><p class="mb-6 text-lg">Sorry, you must be 18+ to enter this site.</p></div>';
+      setTimeout(()=>window.location.href='https://google.com',2500);
+    };
+    // TSParticles blue background
+    tsParticles.load('particlesBg', {
+      particles: {
+        number: { value: 60, density: { enable: true, value_area: 800 } },
+        color: { value: '#1e90ff' },
+        opacity: { value: 0.18 },
+        size: { value: 4, random: true },
+        move: { enable: true, speed: 0.8, direction: 'none', out_mode: 'out' },
+        shape: { type: 'circle' },
+        links: { enable: true, color: '#1e90ff', opacity: 0.09 },
+      },
+      interactivity: {
+        events: { onhover: { enable: false }, onclick: { enable: false } }
+      },
+      retina_detect: true,
+      background: { color: 'transparent' }
+    });
+    // Swiper Featured
+    new Swiper('.featuredSwiper', {
+      loop: true,
+      autoplay: { delay: 4800, disableOnInteraction: false },
+      pagination: { el: '.featuredSwiper .swiper-pagination', clickable: true },
+      navigation: {
+        nextEl: '.featuredSwiper .swiper-button-next',
+        prevEl: '.featuredSwiper .swiper-button-prev'
+      },
+      effect: 'slide',
+      speed: 900,
+    });
+    // News Data
+    const news = [
+      {
+        id:'studio-launch',
+        img:'https://picsum.photos/id/1025/400/220',
+        title:'Major Studio Launches New All-Male Division',
+        date:'1 day ago',
+        author:'Jamie',
+        tags:['industry','launch'],
+        excerpt:'A new studio division launches with a focus on male talent, promising fresh faces and bold new productions. Full scoop inside.',
+        body:'This month marks the debut of a ground-breaking studio division focused entirely on male talent and inclusive productions. We sat down with the creative team to discuss their vision and upcoming projects.'
+      },
+      {
+        id:'chris-flex',
+        img:'https://picsum.photos/id/1052/400/220',
+        title:'Spotlight: Chris Flex’s Dual Debut',
+        date:'2 days ago',
+        author:'Alex',
+        tags:['debut','bisexual'],
+        excerpt:'Chris Flex smashes stereotypes as he bursts onto the scene in both gay and straight productions. Read our exclusive interview.',
+        body:'Chris Flex is making history as one of the first male performers to debut simultaneously in both gay and straight productions. In our exclusive interview, Chris talks about his inspirations and the challenges he’s faced.'
+      },
+      {
+        id:'casting-process',
+        img:'https://picsum.photos/id/1016/400/220',
+        title:'Behind the Scenes: Casting the Next Big Star',
+        date:'3 days ago',
+        author:'Morgan',
+        tags:['casting','industry'],
+        excerpt:'Ever wondered how the hottest male talent is discovered? We reveal the secrets of industry casting.',
+        body:'Behind every big name is a dedicated casting team. We chatted with casting directors about what they look for and the process of finding the next big star.'
+      },
+      {
+        id:'marco-v-returns',
+        img:'https://picsum.photos/id/1015/400/220',
+        title:'Marco V Returns with Blockbuster Role',
+        date:'4 days ago',
+        author:'Danny',
+        tags:['gay','return'],
+        excerpt:'Fan favorite Marco V returns after a short hiatus with a show-stopping new scene. Here’s what to expect.',
+        body:'Marco V is back and better than ever. His latest role puts him front and center in a steamy, high-profile release that’s already generating buzz.'
+      },
+      {
+        id:'lucas-blue-summer',
+        img:'https://picsum.photos/id/1013/400/220',
+        title:'Lucas Blue’s Summer of Success',
+        date:'5 days ago',
+        author:'Taylor',
+        tags:['straight','summer'],
+        excerpt:'Lucas Blue’s latest releases are heating up the charts. We look at what’s driving his popularity.',
+        body:'From beach scenes to romantic dramas, Lucas Blue is dominating this summer’s releases. Fans and critics alike can’t get enough.'
+      },
+      {
+        id:'newcomer-alex-reed',
+        img:'https://picsum.photos/id/1016/400/220',
+        title:'Newcomer Alex Reed Joins the Scene',
+        date:'6 days ago',
+        author:'Jamie',
+        tags:['gay','debut'],
+        excerpt:'Alex Reed, the charismatic new face, is quickly making waves in the industry.',
+        body:'Alex Reed’s debut is turning heads. With natural charm and talent, Alex is poised for a stellar career.'
+      }
+    ];
+    // Tags
+    const tags = [
+      { tag: "gay", count: 44 },
+      { tag: "straight", count: 29 },
+      { tag: "bisexual", count: 11 },
+      { tag: "athletic", count: 9 },
+      { tag: "outdoor", count: 9 },
+      { tag: "industry", count: 6 },
+      { tag: "casting", count: 6 },
+      { tag: "debut", count: 5 },
+      { tag: "return", count: 3 },
+      { tag: "summer", count: 3 },
+      { tag: "launch", count: 2 }
+    ];
+    // Models (same as index)
+    const models = [
+      { id:'jake-strong', name:'Jake Strong', img:'https://picsum.photos/id/1011/400/400', tags:['straight','gay'], topRated:true },
+      { id:'chris-flex', name:'Chris Flex', img:'https://picsum.photos/id/1012/400/400', tags:['bisexual'], topRated:true },
+      { id:'marco-v', name:'Marco V', img:'https://picsum.photos/id/1015/400/400', tags:['gay'], topRated:false },
+      { id:'lucas-blue', name:'Lucas Blue', img:'https://picsum.photos/id/1013/400/400', tags:['straight'], topRated:false },
+      { id:'dylan-steele', name:'Dylan Steele', img:'https://picsum.photos/id/1014/400/400', tags:['straight','gay'], topRated:true },
+      { id:'alex-reed', name:'Alex Reed', img:'https://picsum.photos/id/1016/400/400', tags:['gay'], topRated:false },
+    ];
+    // Videos (same as index)
+    const videos = [
+      { id:'locker-room-heat', title:"Locker Room Heat", img:"https://picsum.photos/id/1027/400/220", tags:["gay","athletic"], popular:true },
+      { id:'beach-bros', title:"Beach Bros", img:"https://picsum.photos/id/1028/400/220", tags:["straight","outdoor"], popular:true },
+      { id:'office-affair', title:"Office Affair", img:"https://picsum.photos/id/1029/400/220", tags:["bisexual","workplace"], popular:false },
+      { id:'afterhours', title:"After Hours", img:"https://picsum.photos/id/1030/400/220", tags:["gay"], popular:true },
+      { id:'poolside', title:"Poolside", img:"https://picsum.photos/id/1031/400/220", tags:["straight"], popular:false },
+      { id:'studio-welcome', title:"Studio Welcome", img:"https://picsum.photos/id/1032/400/220", tags:["gay","new"], popular:false },
+    ];
+    // Render News Grid
+    let currentTag = '';
+    function renderNews(tag='') {
+      currentTag = tag;
+      const grid = document.getElementById('newsGrid');
+      let filtered = news;
+      if (tag) filtered = news.filter(n=>n.tags.includes(tag));
+      grid.innerHTML = filtered.map(n=>`
+        <article class="glass-card p-6 hover:shadow-xl transition relative">
+          <img src="${n.img}" alt="${n.title}" class="rounded-xl mb-4 w-full h-44 object-cover"/>
+          <h3 class="text-lg font-bold mb-2">${n.title}</h3>
+          <div class="text-sm text-primary-dark/60 dark:text-primary-light/60 mb-2">
+            by ${n.author}, ${n.date} • 
+            ${n.tags.map(t=>`<span class="fa-solid fa-tag text-accent"></span> <span class="inline-flex gap-1">#${t}</span>`).join(' ')}
+          </div>
+          <p class="mb-4">${n.excerpt}</p>
+          <button class="text-primary font-bold hover:underline read-more-btn" data-id="${n.id}">Read More</button>
+          <div class="hidden full-article mt-2 text-base">${n.body}</div>
+        </article>
+      `).join('');
+      document.getElementById('noNews').classList.toggle('hidden', filtered.length > 0);
+      // Read more toggles
+      grid.querySelectorAll('.read-more-btn').forEach(btn=>{
+        btn.onclick = function() {
+          const article = this.parentElement;
+          article.querySelector('.full-article').classList.toggle('hidden');
+          this.innerText = article.querySelector('.full-article').classList.contains('hidden') ? 'Read More' : 'Show Less';
+        };
+      });
+      // Highlight tag
+      document.querySelectorAll('.filter-tag').forEach(btn=>{
+        btn.classList.toggle('bg-primary', btn.dataset.tag===tag);
+        btn.classList.toggle('text-white', btn.dataset.tag===tag);
+      });
+    }
+    renderNews();
+    document.querySelectorAll('.filter-tag').forEach(btn=>{
+      btn.onclick = ()=>renderNews(btn.dataset.tag);
+    });
+    // Trending News Sidebar: show 3 most recent
+    document.getElementById('trendingNews').innerHTML = news.slice(0,3).map(n=>`
+      <li class="glass-card flex items-center gap-3 p-2">
+        <img src="${n.img}" alt="${n.title}" class="rounded-xl w-12 h-12 object-cover"/>
+        <div>
+          <div class="font-bold text-xs">${n.title}</div>
+          <div class="flex gap-1">${n.tags.map(t=>`<span class="text-xs bg-accent/20 text-accent rounded px-2">#${t}</span>`).join('')}</div>
+        </div>
+      </li>
+    `).join('');
+    // Top Rated Models Sidebar
+    document.getElementById('topModels').innerHTML = models.filter(m=>m.topRated).slice(0,3).map(m=>`
+      <li class="glass-card flex items-center gap-3 p-2">
+        <img src="${m.img}" alt="${m.name}" class="rounded-full w-12 h-12 object-cover"/>
+        <div>
+          <div class="font-bold">${m.name}</div>
+          <div class="flex gap-1">${m.tags.map(t=>`<span class="text-xs bg-accent/20 text-accent rounded px-2">${t}</span>`).join('')}</div>
+        </div>
+      </li>
+    `).join('');
+    // Top Videos Sidebar
+    document.getElementById('topVideos').innerHTML = videos.filter(v=>v.popular).slice(0,3).map(v=>`
+      <li class="glass-card flex items-center gap-3 p-2">
+        <img src="${v.img}" alt="${v.title}" class="rounded-xl w-12 h-12 object-cover"/>
+        <div>
+          <div class="font-bold">${v.title}</div>
+          <div class="flex gap-1">${v.tags.map(t=>`<span class="text-xs bg-accent/20 text-accent rounded px-2">${t}</span>`).join('')}</div>
+        </div>
+      </li>
+    `).join('');
+    // Popular Tags Sidebar
+    document.getElementById('popularTags').innerHTML = tags.slice(0,7).map(t=>`
+      <span class="bg-accent/20 text-accent px-3 py-1 rounded-full text-xs flex items-center gap-1">
+        <span class="fa-solid fa-hashtag"></span> ${t.tag} <span class="font-bold">${t.count}</span>
+      </span>
+    `).join('');
+    // Newsletter Signup
+    document.getElementById('newsletterForm').onsubmit = function(e) {
+      e.preventDefault();
+      const email = document.getElementById('newsletterEmail').value.trim();
+      const msg = document.getElementById('newsletterMsg');
+      if (!email.match(/^\S+@\S+\.\S+$/)) {
+        msg.innerHTML = '<span class="text-red-500">Please enter a valid email.</span>';
+        return;
+      }
+      msg.innerHTML = '<span class="text-green-600">Thank you for subscribing!</span>';
+      this.reset();
+    };
+    // Message Submission
+    document.getElementById('messageForm').onsubmit = function(e) {
+      e.preventDefault();
+      const text = document.getElementById('userMessage').value.trim();
+      const msg = document.getElementById('messageMsg');
+      if (!text) {
+        msg.innerHTML = '<span class="text-red-500">Message cannot be empty.</span>';
+        return;
+      }
+      msg.innerHTML = '<span class="text-green-600">Message sent! Thank you.</span>';
+      this.reset();
+    };
+    // Animate on scroll - ScrollReveal
+    ScrollReveal().reveal('section', { delay: 60, duration: 700, origin: 'bottom', distance: '30px', easing: 'ease', reset: false, cleanup: true });
+  </script>
+</body>
+</html>
